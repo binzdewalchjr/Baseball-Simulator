@@ -6,7 +6,6 @@ Created on Thu Apr 22 19:32:23 2021
 """
 import pandas as pd
 
-import csv
 df = pd.read_csv(r'Astros Hitters.csv')
 dfp = pd.read_csv(r'Astros Pitchers.csv')
 print(df)
@@ -14,8 +13,8 @@ print(df)
 class Batter:
    def __repr__(self):
        return self.name
-#   def __str__(self):
-#       return "member of Test"
+   def __str__(self):
+       return self.name
    def __init__(self, name, POS, HAND, PA, FB, SB, TB, HR, BB, HBP, H):
             self.name = name
             self.POS = POS
@@ -31,15 +30,15 @@ class Batter:
 
 Batters_list = []
 for x in range(len(df)):
-    if int(df.iloc[x][9]) != 0 and int(df.iloc[x][6]) != 0 and int(df.iloc[x][5]) != 0:
+    if float(df.iloc[x][9]) != 0 and float(df.iloc[x][6]) != 0 and float(df.iloc[x][5]) != 0:
         player_name = df.iloc[x][2]
-        first = (int(df.iloc[x][8]) - (int(df.iloc[x][9]) + int(df.iloc[x][10]) + int(df.iloc[x][11]))) / int(df.iloc[x][8])
-        second = (int(df.iloc[x][9])) / int(df.iloc[x][8])
-        third = (int(df.iloc[x][10])) / int(df.iloc[x][8])
-        HomeRun = (int(df.iloc[x][11])) / int(df.iloc[x][8])
-        Walk = (int(df.iloc[x][15])) / int(df.iloc[x][5])
-        HitByPitcher = (int(df.iloc[x][24])) / int(df.iloc[x][5])
-        Hit = (int(df.iloc[x][15])) / int(df.iloc[x][6])
+        first = (float(df.iloc[x][8]) - (float(df.iloc[x][9]) + float(df.iloc[x][10]) + float(df.iloc[x][11]))) / float(df.iloc[x][8])
+        second = (float(df.iloc[x][9])) / float(df.iloc[x][8])
+        third = (float(df.iloc[x][10])) / float(df.iloc[x][8])
+        HomeRun = (float(df.iloc[x][11])) / float(df.iloc[x][8])
+        Walk = (float(df.iloc[x][15])) / float(df.iloc[x][5])
+        HitByPitcher = (float(df.iloc[x][24])) / float(df.iloc[x][5])
+        Hit = (float(df.iloc[x][15])) / float(df.iloc[x][6])
         p1 = Batter(df.iloc[x][2], df.iloc[x][1], df.iloc[x][28], df.iloc[x][5], first, second, third, HomeRun, Walk, HitByPitcher, Hit)
         Batters_list.append(p1)
 print(Batters_list)
@@ -50,7 +49,7 @@ class Pitcher:
    def __repr__(self):
        return self.name
    def __str__(self):
-       return "member of Test"
+       return self.name
    def __init__(self, name, POS, HAND, K, BB, HR, H, NP, TBF, GP, IP, AA, GO_AO):
             self.name = name
             self.POS = POS
@@ -68,20 +67,22 @@ class Pitcher:
 
 Pitchers_list = []
 for x in range(len(dfp)):
-    if int(dfp.iloc[x][9]) != 0:
+    if float(dfp.iloc[x][9]) != 0:
         player_name = dfp.iloc[x][2]
-        Strikeout = (int(dfp.iloc[x][8]) - (int(dfp.iloc[x][9]) + int(dfp.iloc[x][10]) + int(dfp.iloc[x][11]))) / int(dfp.iloc[x][9])
-        PitchCount = (int(dfp.iloc[x][9])) / int(dfp.iloc[x][8])
-        BattersFaced = (int(dfp.iloc[x][10])) / int(dfp.iloc[x][8])
-        HomeRun = (int(dfp.iloc[x][11])) / int(dfp.iloc[x][8])
-        Walk = (int(dfp.iloc[x][15])) / int(dfp.iloc[x][5])
-        HitByPitcher = (int(dfp.iloc[x][24])) / int(dfp.iloc[x][5])
-        Hit = (int(dfp.iloc[x][15])) / int(dfp.iloc[x][6])
+        Strikeout = float(dfp.iloc[x][21]) / float(dfp.iloc[x][25])
+        PitchCount = float(dfp.iloc[x][26])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
+        BattersFaced = float(dfp.iloc[x][35])
+        HomeRun = (float(dfp.iloc[x][18])) / BattersFaced
+        Walk = (float(dfp.iloc[x][17])) / BattersFaced
+        HitByPitcher = (float(dfp.iloc[x][22])) / BattersFaced
+        Hit = float(dfp.iloc[x][15])
         GamesPitched = dfp.iloc[x][8]
-        InningsPitched = dfp.iloc[x][14]
+        InningsPitched = round(float(dfp.iloc[x][14])) + (float(dfp.iloc[x][14]) % 1)* 3
+        AverageAgainst = float(dfp.iloc[x][15])/ BattersFaced
+        GroundOverAir = dfp.iloc[x][36]
         
-        p1 = Batter(dfp.iloc[x][2], dfp.iloc[x][1], dfp.iloc[x][28], dfp.iloc[x][5], first, dfp.iloc[x][9], dfp.iloc[x][10], dfp.iloc[x][11], dfp.iloc[x][15], dfp.iloc[x][24], dfp.iloc[x][8])
-        Batters_list.append(p1)
-print(Batters_list)
+        p1 = Pitcher(dfp.iloc[x][2], dfp.iloc[x][1], dfp.iloc[x][35], Strikeout, Walk, HomeRun, Hit, PitchCount, BattersFaced, GamesPitched, InningsPitched, AverageAgainst, GroundOverAir)
+        Pitchers_list.append(p1)
+print(Pitchers_list)
 
-
+print(Pitchers_list[0].HR)
