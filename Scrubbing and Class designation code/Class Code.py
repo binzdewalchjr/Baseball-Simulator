@@ -8,7 +8,7 @@ import pandas as pd
 
 df = pd.read_csv(r'Astros Hitters.csv')
 dfp = pd.read_csv(r'Astros Pitchers.csv')
-print(df)
+
 
 class Batter:
    def __repr__(self):
@@ -38,11 +38,12 @@ for x in range(len(df)):
         HomeRun = (float(df.iloc[x][11])) / float(df.iloc[x][8])
         Walk = (float(df.iloc[x][15])) / float(df.iloc[x][5])
         HitByPitcher = (float(df.iloc[x][24])) / float(df.iloc[x][5])
-        Hit = (float(df.iloc[x][15])) / float(df.iloc[x][6])
+        Hit = (float(df.iloc[x][15])) / float(df.iloc[x][5])
         p1 = Batter(df.iloc[x][2], df.iloc[x][1], df.iloc[x][28], df.iloc[x][5], first, second, third, HomeRun, Walk, HitByPitcher, Hit)
         Batters_list.append(p1)
-print(Batters_list)
 
+print(Batters_list[0].name)
+print(Batters_list[0].FB)
 
 
 class Pitcher:
@@ -52,7 +53,7 @@ class Pitcher:
        return self.name
    def __init__(self, name, POS, HAND, K, BB, HR, H, NP, TBF, GP, IP, AA, GO_AO):
             self.name = name
-            self.POS = POS
+            self.POS = POS # all listed as pitchers
             self.HAND = HAND
             self.K = K
             self.BB = BB
@@ -67,12 +68,11 @@ class Pitcher:
 
 Pitchers_list = []
 for x in range(len(dfp)):
-    if float(dfp.iloc[x][9]) != 0:
         player_name = dfp.iloc[x][2]
         Strikeout = float(dfp.iloc[x][21]) / float(dfp.iloc[x][25])
-        PitchCount = float(dfp.iloc[x][26])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
-        BattersFaced = float(dfp.iloc[x][35])
-        HomeRun = (float(dfp.iloc[x][18])) / BattersFaced
+        PitchCount = float(dfp.iloc[x][26])/ float(dfp.iloc[x][8])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
+        BattersFaced = float(dfp.iloc[x][25])
+        HomeRun = (float(dfp.iloc[x][18])) / float(dfp.iloc[x][15])
         Walk = (float(dfp.iloc[x][17])) / BattersFaced
         HitByPitcher = (float(dfp.iloc[x][22])) / BattersFaced
         Hit = float(dfp.iloc[x][15])
@@ -83,6 +83,4 @@ for x in range(len(dfp)):
         
         p1 = Pitcher(dfp.iloc[x][2], dfp.iloc[x][1], dfp.iloc[x][35], Strikeout, Walk, HomeRun, Hit, PitchCount, BattersFaced, GamesPitched, InningsPitched, AverageAgainst, GroundOverAir)
         Pitchers_list.append(p1)
-print(Pitchers_list)
 
-print(Pitchers_list[0].HR)
