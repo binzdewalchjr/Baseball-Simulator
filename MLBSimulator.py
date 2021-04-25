@@ -46,6 +46,8 @@ HomeLineup = input("Enter home team line up in the form 'Player[Postition],[Play
                    "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
                    "If the pitcher is hitting for himself in the National League list the name twice"+ \
                      " once for his hitting spot in the line up and againg at the end as a pitcher.")
+    
+GameMode = input("Enter game mode: 100Game, Inning, AtBat\n")
 
 ##Pool of available pitchers(dicitonary)
 
@@ -803,15 +805,129 @@ HomeScore = 0
 AwayHits = 0
 HomeHits = 0
 Score= [AwayScore,HomeScore]
+Hits = [AwayHit, HomeHits]
 ##Inning Loop
-def HalfInning(TeamHitting, LineUp, Pitcher, Score)
+def HalfInning(TeamHitting, LineUp, Pitcher, Score, Hits, Pitchcount)
     Outs = 0
     while Outs < 3:
-        State, Runs, CurrentResult, CurrentRunners = AtBat(Pitcher, Lineup[SpotInLineup], Bases, Outs, Runners, Score)
-        Pitchcount += Pitcher.PitchesPerBatter
+        CurrentResult, Bases, CurrentOuts, Runs, CurrentRunners = AtBat(Pitcher, Lineup[SpotInLineup], Bases, Outs, Runners, Score)
+        PitchCount += Pitcher.PitchesPerBatter
         if TeamHitting == "Away":
             AwayScore += Runs
-            if Result
+            if Result == "1B" or Result == "2B" or Result == "3B" or Result == "HR":
+                AwayHits += 1
+            if AwaySpotInLineup == 8:
+                AwaySpotInLineup = 0
+            else:
+            AwaySpotInLineup += 1
+            
+            TempLineUpSpot = AwaySpotInLineup
+            TempLineUp = AwayLineup
+            TempPitcher = HomePitcher
+            
+        if TeamHitting == "Home":
+            HomeScore += Runs
+            if Result == "1B" or Result == "2B" or Result == "3B" or Result == "HR":
+                HomeHits += 1
+            if HomeSpotInLineup == 8:
+                HomeSpotInLineup = 0
+            else:
+                HomeSpotInLineup += 1
+             TempLineUpSpot = HomeSpotInLineup
+             TempLineUp = HomeLineup
+             TempPitcher = AwayPitcher
+             
+        if GameMode == "AtBat":
+            print("Now Batting: {0} \n Pitching: {1}".format(TempLineUp[TempLineUpSpot], TempPitcher))
+            AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'h', to simulate to the end of the game type 'e', to quit type 'q'\n")
+            if AskUser == "y":
+                continue
+            if AskUser == "p":
+                for players in pitcher_list:
+                    print(player)
+                NewPitcher = input("Enter one of the pitchers above\n")
+                if NewPitcher not in pitcher_list:
+                    while NewPitcher not in pitcher_list:
+                        NewPitcher = input("Please enter a valid pitcher. To list the pitchers type 'ls'. To exit type 'q' \n")
+                        if NewPitcher = "ls":
+                            for players in pitcher_list:
+                                print(player)
+                        if NewPitcher == "q":
+                            exit()
+                if TeamHitting == "Away":
+                    HomePitcher = NewPitcher
+                if TeamHitting == "Home":
+                    AwayPitcher = NewPitcher
+            if AskUser == "b":
+                for players in Batters_list:
+                    if player not in TempLineUp:
+                        print(player)
+                NewBatter = input("Enter one of the batters above\n")
+                if NewBatter not in Batters_list:
+                    while NewBatter not in Batters_list:
+                        NewBatter = input("Please enter a valid hitter. To list the hitters type 'ls'. To exit type 'q' \n")
+                        if NewBatter = "ls":
+                           if player not in TempLineUp:
+                               print(player)
+                        if NewBatter == "q":
+                            exit()
+            if AskUser == "e":
+                GameMode = "Sim2End"
+            if AskUser == "q":
+                exit()
+    if TeamHitting == "Away":
+        TeamHitting = "Home"
+    if TeamHitting == "Home":
+        TeamHitting = "Away"
+    return TeamHitting, Score, Hits, PitchCount, LineUpSpot
+
+##Main Game Code
+CurrentInning = 1
+while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] = Score[1]):
+    HalfInning()
+    CurrentInning += 1
+    if GameMode == "Inning":
+        DueUp = LineUp[LineUpSpot]
+        OnDeck = LineUp[LineUpSpot+1]
+        InTheHole = LineUp[LineUpSpot+2]
+        print("Due up:{0}\n{1}\n{2}\n".format(DueUp, OnDeck, InTheHole))
+        AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'h', to simulate to the end of the game type 'e', to quit type 'q'\n")
+            if AskUser == "y":
+                continue
+            if AskUser == "p":
+                for players in pitcher_list:
+                    print(player)
+                NewPitcher = input("Enter one of the pitchers above\n")
+                if NewPitcher not in pitcher_list:
+                    while NewPitcher not in pitcher_list:
+                        NewPitcher = input("Please enter a valid pitcher. To list the pitchers type 'ls'. To exit type 'q' \n")
+                        if NewPitcher = "ls":
+                            for players in pitcher_list:
+                                print(player)
+                        if NewPitcher == "q":
+                            exit()
+                if TeamHitting == "Away":
+                    HomePitcher = NewPitcher
+                if TeamHitting == "Home":
+                    AwayPitcher = NewPitcher
+            if AskUser == "b":
+                for players in Batters_list:
+                    if player not in TempLineUp:
+                        print(player)
+                NewBatter = input("Enter one of the batters above\n")
+                if NewBatter not in Batters_list:
+                    while NewBatter not in Batters_list:
+                        NewBatter = input("Please enter a valid hitter. To list the hitters type 'ls'. To exit type 'q' \n")
+                        if NewBatter = "ls":
+                           if player not in TempLineUp:
+                               print(player)
+                        if NewBatter == "q":
+                            exit()
+            if AskUser == "e":
+                GameMode = "Sim2End"
+            if AskUser == "q":
+                exit()
+
     ##Managerial style argument
     ##Conditions for how many bases runner on base get per type of hit
     ##3 Battter minimum / end of inning for relief pitchers 
