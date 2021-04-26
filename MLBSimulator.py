@@ -5,6 +5,7 @@ Created on Thu Apr 22 13:56:33 2021
 
 @author: javi
 """
+import pandas as pd
 ##File 1
 ##Scrape data file from the web 
 
@@ -27,25 +28,127 @@ Created on Thu Apr 22 13:56:33 2021
     ## team will have own CSV file)
     ## Argument for wheher pulling from entire MLB with the first column of the MLB file
     ## indicating which team a player plays for
+SetAwayTeam = False
+SetHomeTeam = False
 PossibleTeams = [""]
-AwayTeam = input("Enter the name of the Away Team. For a list of possible teams type 'ls', to exit type 'q' \n")
-if AwayTeam == "ls":
-    print()
-    AwayTeam = input("Choose from one of the listed teams \n")
-elif AwayTeam == "q":
-    exit()
-elif AwayTeam in PossibleTeams:
-    SetAwayTeam = True
-    
+while SetAwayTeam == False:
+    AwayTeam = input("Enter the name of the Away Team. For a list of possible teams type 'ls', to exit type 'q' \n")
+    if AwayTeam == "ls":
+        print()
+        AwayTeam = input("Choose from one of the listed teams \n")
+    elif AwayTeam == "q":
+        exit()
+    elif AwayTeam in PossibleTeams:
+        SetAwayTeam = True
+while SetHomeTeam == False:
+    HomeTeam = input("Enter the name of the Home Team. For a list of possible teams type 'ls', to exit type 'q' \n")
+    if HomeTeam == "ls":
+        print()
+        HomeTeam = input("Choose from one of the listed teams \n")
+    elif HomeTeam == "q":
+        exit()
+    elif HomeTeam in PossibleTeams:
+        SetAwayTeam = True
+##insert pandas reading in data frame
+df = pd.read_csv(r'{0}_Hitters.csv'.format(AwayTeam))
+dfp = pd.read_csv(r'{0}_Pitchers.csv'.format(AwayTeam))
+
+df1 = pd.read_csv(r'{0}_Hitters.csv'.format(HomeTeam))
+dfp1 = pd.read_csv(r'{0}_Pitchers.csv'.format(HomeTeam))
+
+PlayerDictionary = dict()
+PlayerDictionary["Hitting0"] = df
+PlayerDictionary["Hitting1"] = df1
+PlayerDictionary["Pitching0"] = dfp
+PlayerDictionary["Pitching1"] = dfp1
+class Batter:
+   def __repr__(self):
+       return self.name
+   def __str__(self):
+       return self.name
+   def __init__(self, name, POS, HAND, PA, FB, SB, TB, HR, BB, HBP, H):
+            self.name = name
+            self.POS = POS
+            self.HAND = HAND
+            self.PA = PA
+            self.FB = FB
+            self.SB = SB
+            self.TB = TB
+            self.HR = HR
+            self.BB = BB
+            self.HBP = HBP
+            self.H = H
+
+Batters_list = []
+for i in range(0,2):
+    PlayersToPass = PlayerDictionary["Hitting{0}".format(i)]
+    for x in range(len(PlayersToPass)):
+        if float(df.iloc[x][9]) != 0 and float(df.iloc[x][6]) != 0 and float(df.iloc[x][5]) != 0:
+            player_name = df.iloc[x][2]
+            first = (float(df.iloc[x][8]) - (float(df.iloc[x][9]) + float(df.iloc[x][10]) + float(df.iloc[x][11]))) / float(df.iloc[x][8])
+            second = (float(df.iloc[x][9])) / float(df.iloc[x][8])
+            third = (float(df.iloc[x][10])) / float(df.iloc[x][8])
+            HomeRun = (float(df.iloc[x][11])) / float(df.iloc[x][8])
+            Walk = (float(df.iloc[x][15])) / float(df.iloc[x][5])
+            HitByPitcher = (float(df.iloc[x][24])) / float(df.iloc[x][5])
+            Hit = (float(df.iloc[x][15])) / float(df.iloc[x][5])
+            p1 = Batter(df.iloc[x][2], df.iloc[x][1], df.iloc[x][28], df.iloc[x][5], first, second, third, HomeRun, Walk, HitByPitcher, Hit)
+            Batters_list.append(p1)
+
+print(Batters_list[0].name)
+print(Batters_list[0].FB)
+
+
+class Pitcher:
+   def __repr__(self):
+       return self.name
+   def __str__(self):
+       return self.name
+   def __init__(self, name, POS, HAND, K, BB, HR, H, NP, TBF, GP, IP, AA, GO_AO):
+            self.name = name
+            self.POS = POS # all listed as pitchers
+            self.HAND = HAND
+            self.K = K
+            self.BB = BB
+            self.HR = HR
+            self.H = H
+            self.NP = NP
+            self.TBF = TBF
+            self.GP = GP
+            self.IP = IP
+            self.AA = AA
+            self.GO_AO = GO_AO
+
+Pitchers_list = []
+for i in range(0,2):
+    PlayersToPass = PlayerDictionary["Pitching{0}".format(i)]
+    for x in range(len(PlayersToPass)):
+        if int(dfp.iloc[x][15]) != 0:
+            player_name = dfp.iloc[x][2]
+            Strikeout = float(dfp.iloc[x][21]) / float(dfp.iloc[x][25])
+            PitchCount = float(dfp.iloc[x][26])/ float(dfp.iloc[x][8])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
+            BattersFaced = float(dfp.iloc[x][25])
+            HomeRun = (float(dfp.iloc[x][18])) / float(dfp.iloc[x][15])
+            Walk = (float(dfp.iloc[x][17])) / BattersFaced
+            HitByPitcher = (float(dfp.iloc[x][22])) / BattersFaced
+            Hit = float(dfp.iloc[x][15])
+            GamesPitched = dfp.iloc[x][8]
+            InningsPitched = round(float(dfp.iloc[x][14])) + (float(dfp.iloc[x][14]) % 1)* 3
+            AverageAgainst = float(dfp.iloc[x][15])/ BattersFaced
+            GroundOverAir = dfp.iloc[x][36]
+            
+            p1 = Pitcher(dfp.iloc[x][2], dfp.iloc[x][1], dfp.iloc[x][35], Strikeout, Walk, HomeRun, Hit, PitchCount, BattersFaced, GamesPitched, InningsPitched, AverageAgainst, GroundOverAir)
+            Pitchers_list.append(p1)
+   
 AwayLineup = input("Enter away team line up in the form 'Player[Postition],[Player[Postition]...' "+ \
                    "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
                    "If the pitcher is hitting for himself in the National League list the name twice"+ \
-                     " once for his hitting spot in the line up and againg at the end as a pitcher.")
+                     " once for his hitting spot in the line up and again at the end as a pitcher.")
     
 HomeLineup = input("Enter home team line up in the form 'Player[Postition],[Player[Postition]...' "+ \
                    "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
                    "If the pitcher is hitting for himself in the National League list the name twice"+ \
-                     " once for his hitting spot in the line up and againg at the end as a pitcher.")
+                     " once for his hitting spot in the line up and again at the end as a pitcher.")
     
 GameMode = input("Enter game mode: 100Game, Inning, AtBat\n")
 
