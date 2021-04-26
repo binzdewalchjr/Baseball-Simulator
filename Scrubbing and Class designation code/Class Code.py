@@ -68,6 +68,7 @@ class Pitcher:
 
 Pitchers_list = []
 for x in range(len(dfp)):
+    if int(dfp.iloc[x][15]) != 0:
         player_name = dfp.iloc[x][2]
         Strikeout = float(dfp.iloc[x][21]) / float(dfp.iloc[x][25])
         PitchCount = float(dfp.iloc[x][26])/ float(dfp.iloc[x][8])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used

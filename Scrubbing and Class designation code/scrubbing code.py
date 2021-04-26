@@ -13,10 +13,10 @@ import re
 import requests
 
 url = 'https://www.espn.com/mlb/history/leaders/_/breakdown/season/year/2018/start/1'
-page1 = requests.get(url)
-soup1 = BeautifulSoup(page1.text, 'html.parser')
+page = requests.get(url)
+soup = BeautifulSoup(page.text, 'html.parser')
 
-players = soup1.find_all('tr', attrs={'class':re.compile('row prlayer-10-')})
+players = soup.find_all('tr', attrs={'class':re.compile('row prlayer-10-')})
 for player in players:
     
     stats = [stat.get_text() for stat in player.find_all('td')]
