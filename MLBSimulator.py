@@ -1104,6 +1104,8 @@ Hits = [AwayHits, HomeHits]
 HomePitchCount = 0
 AwayPitchCount = 0
 PitchCount = [AwayPitchCount, HomePitchCount]
+AwayRelieverNumber = 1
+HomeRelieverNumber = 1
 ##Inning Loop
 def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCount, GameMode):
     if TeamHitting == "Away":
@@ -1246,6 +1248,9 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
                 OnDeck = LineUp[SpotInLineup[1]+1]
                 InTheHole = LineUp[SpotInLineup[1]+2]
             InningStatus = 'Bottom'
+        if CurrentInning >= 10 and InningStatus == "Top" and (Score[0] != Score[1]):
+            continue
+
         print("")
         print("##############################################################")
         print("")
@@ -1272,16 +1277,19 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
                             print(player)
                     if NewPitcher == "q":
                         exit()
-                    if TeamHitting == 'Away':
-                        HomeLineup[9] = NewPitcher
-                    else:
-                        AwayLineup[9] = NewPitcher
+            
+            if TeamHitting == 'Away':
+                FindPitcher = dictionary_of_pitchers1[NewPitcher]
+                HomeLineup[9] = FindPitcher
+            else:
+                FindPitcher = dictionary_of_pitchers[NewPitcher]
+                AwayLineup[9] = FindPitcher
         if AskUser == "b":
             if TeamHitting == "Away":
                 change_batters_list = list_of_batters
             else:
                 change_batters_list = list_of_batters1
-            for players in change_batters_list:
+            for player in change_batters_list:
                 if player not in LineUp:
                     print(player)
             NewBatter = input("Enter one of the batters above\n")
@@ -1293,6 +1301,12 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
                            print(player)
                     if NewBatter == "q":
                         exit()
+            if TeamHitting == "Away":
+                FindBatter = dictionary_of_batters[NewBatter]
+                AwayLineup[SpotInLineup[0]] = FindBatter
+            else:
+                FindBatter = dictionary_of_batters1[NewBatter]
+                HomeLineup[SpotInLineup[1]] = FindBatter
             
         if AskUser == "e":
             GameMode = "100Games"
@@ -1301,12 +1315,14 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
             exit()
     else:
         if TeamHitting == 'Away':
-            Pitchcountsub = PitchCount[0]
+            if PitchCount[1] > (HomeLineup[9].NP/HomeLineup[9].TBF):
+                HomeLineup[9] = Pitchers_list1[HomeRelieverNumber]
+                HomeRelieverNumber += 1
         else:
-            Pitchcountsub = PitchCount[1]
-        if PitchCountsub > Pitcher.NP:
-            ##Replace Pitcher
-            Pitcher = 0
+            if PitchCount[0] > (AwayLineup[9].NP/AwayLineup[9].TBF):
+                AwayLineup[9] = Pitchers_list[AwayRelieverNumber]
+                AwayRelieverNumber += 1
+        
 
 print("The Game is over, The Final Score is", AwayTeam, Score[0], HomeTeam, Score[1])
 
