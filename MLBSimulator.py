@@ -48,7 +48,7 @@ while SetHomeTeam == False:
     elif HomeTeam == "q":
         exit()
     elif HomeTeam in PossibleTeams:
-        SetAwayTeam = True
+        SetHomeTeam = True
 ##insert pandas reading in data frame
 df = pd.read_csv(r'{0}_Hitters.csv'.format(AwayTeam))
 dfp = pd.read_csv(r'{0}_Pitchers.csv'.format(AwayTeam))
@@ -80,6 +80,7 @@ class Batter:
             self.H = H
 
 Batters_list = []
+Batters_list1 = []
 for i in range(0,2):
     PlayersToPass = PlayerDictionary["Hitting{0}".format(i)]
     for x in range(len(PlayersToPass)):
@@ -93,10 +94,13 @@ for i in range(0,2):
             HitByPitcher = (float(df.iloc[x][24])) / float(df.iloc[x][5])
             Hit = (float(df.iloc[x][15])) / float(df.iloc[x][5])
             p1 = Batter(df.iloc[x][2], df.iloc[x][1], df.iloc[x][28], df.iloc[x][5], first, second, third, HomeRun, Walk, HitByPitcher, Hit)
-            Batters_list.append(p1)
+            if i == 0:
+                Batters_list.append(p1)
+            if i == 1:
+                Batters_list1.append(p1)
 
-print(Batters_list[0].name)
-print(Batters_list[0].FB)
+#print(Batters_list[0].name)
+#print(Batters_list[0].FB)
 
 
 class Pitcher:
@@ -136,16 +140,18 @@ for i in range(0,2):
             InningsPitched = round(float(dfp.iloc[x][14])) + (float(dfp.iloc[x][14]) % 1)* 3
             AverageAgainst = float(dfp.iloc[x][15])/ BattersFaced
             GroundOverAir = dfp.iloc[x][36]
-            
             p1 = Pitcher(dfp.iloc[x][2], dfp.iloc[x][1], dfp.iloc[x][35], Strikeout, Walk, HomeRun, Hit, PitchCount, BattersFaced, GamesPitched, InningsPitched, AverageAgainst, GroundOverAir)
-            Pitchers_list.append(p1)
+            if i == 0:
+                Pitchers_list.append(p1)
+            if i == 1:
+                Pitchers_list1.append(p1)
    
-AwayLineup = input("Enter away team line up in the form 'Player[Postition],[Player[Postition]...' "+ \
+AwayLineup = input("Enter away team line up in the form 'Player[Postition],Player[Postition]...' "+ \
                    "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
                    "If the pitcher is hitting for himself in the National League list the name twice"+ \
                      " once for his hitting spot in the line up and again at the end as a pitcher.")
     
-HomeLineup = input("Enter home team line up in the form 'Player[Postition],[Player[Postition]...' "+ \
+HomeLineup = input("Enter home team line up in the form 'Player[Postition],Player[Postition]...' "+ \
                    "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
                    "If the pitcher is hitting for himself in the National League list the name twice"+ \
                      " once for his hitting spot in the line up and again at the end as a pitcher.")
@@ -174,16 +180,16 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
     EventPercent = random.random()
     
     # HRPitcher = Pitcher.InningsSinceHR * Pitcher.HRper9 #Adjust formula
-    HR = Batter.HR  #Adjust formula
-    BBPitcher = Pitcher.BB
-    BB = Batter.BB + BBPitcher #Adjust formula
-    HBP = np.mean(Batter.HBP + Pitcher.HBP)
-    K = Batter.K + Pitcher.K #Adjust formula
-    FB = Batter.FB
-    SB = Batter.SB
-    TB = Batter.TB
+    H = (Batter.H/Batter.PA) * (Pitcher.H/Pitcher.TBF)/ 0.248 #Adjust formula
+    BB = (Batter.BB/Batter.PA) * (Pitcher.BB/Pitcher.TBF) / 0.090 #Adjust formula
+    HBP = (Batter.HBP/Batter.PA) * (Pitcher.HBP/Pitcher.TBF)/ 0.01038
+    K = (Batter.K/Batter.PA) * (Pitcher.K/Pitcher.TBF) / 0.222#Adjust formula
+    FB = H * (Batter.FB/Batter.H)
+    SB = H * (Batter.SB/Battter.H)
+    TB = H * (Batter.TB/Batter.H)
+    HR = H * (Batter.HR/Batter.H)
     RemainingPercentage = 1-FB-SB-TB-HR-BB-HBP-K
-    GO = RemainingPercentage / (1+Pitcher.GO_AO) * Pitcher.GO_AO
+    GO = RemainingPercentage * Pitcher.GO_AO/(1+Pitcher.GO_AO)
     ##Add create wieghted average for each action
     ## Renormalize based on the new total
     ## Add condition for error propagation to rerun the random generator if it
@@ -208,7 +214,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
         Result = "GO"
     else:
         PopOut_FlyOut = random.random()
-        FlyOut = 0 #insert fly out stat
+        FlyOut = 0.760 #insert fly out stat
         if PopOut_FlyOut < FlyOut:
             Result = "FO"
         else:
@@ -400,7 +406,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Outs += 1
         elif Result == "FO":
             if Outs < 2:
-                OddsTagThird = 0 #insert odds
+                OddsTagThird = 0.804 #insert odds
                 TagThird = random.random()
                 if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                     OddsTagThird *= 0.75
@@ -410,7 +416,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Runs = 1
                     Outs += 1
                     Bases = "000"
-                elif TagThird < (OddsTagThird + 0.05):
+                elif TagThird < (OddsTagThird + 0.0309):
                     Outs += 2
                     Bases = "000"
                 else:
@@ -420,7 +426,13 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                 Outs += 1
         elif Result == "GO":
             Outs += 1
-            Bases = "100"
+            OddsScoreThird = 0.555
+            ScoreThird = random.random()
+            if ScoreThird < OddsScoreThird:
+                Runs += 1
+                Bases = "000"
+            else:
+                Bases = "100"
         
             
     elif Bases == "011":
@@ -576,7 +588,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Bases = "110"
         elif Result == "FO":
             if Outs < 2:
-                OddsTagThird = 0 #insert odds
+                OddsTagThird = 0.804 #insert odds
                 TagThird = random.random()
                 if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                     OddsTagThird *= 0.75
@@ -586,7 +598,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Runs = 1
                     Outs += 1
                     Bases = "010"
-                elif TagThird < (OddsTagThird + 0.05):
+                elif TagThird < (OddsTagThird + 0.0309):
                     Outs += 2
                     Bases = "010"
                 else:
@@ -596,7 +608,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                 Outs += 1
         elif Result == "GO":
             if Outs < 2:
-                OddsScoreGO = 0 #insert odds
+                OddsScoreGO = 0.555 #insert odds
                 ScoreGO = random.random()
                 if ScoreGO < OddsScoreGO:
                     Runs = 1
@@ -620,7 +632,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Runners.append(Batter)
             Runs = 1
             del Runners[0]
-            OddsFirstToThird = 0 #insert odds
+            OddsFirstToThird = 0.276 #insert odds
             FirstToThird = random.random()
             if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                 OddsFirstToThird = 0 * OddsFirstToThird #insert odds function
@@ -647,7 +659,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Runs = 1
             del Runners[0]
             ScoreFromFirst = random.random()
-            OddsScoreFromFirst = 0.47 #insert odds
+            OddsScoreFromFirst = 0.471 #insert odds
             if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                     OddsScoreFromFirst = 0.60 * OddsScoreFromFirst #insert odds function
                     if Outs == 2:
@@ -687,7 +699,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Bases = "101"
         elif Result == "FO":
             if Outs < 2:
-                OddsTagThird = 0 #insert odds
+                OddsTagThird = 0.804 #insert odds
                 TagThird = random.random()
                 if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                     OddsTagThird *= 0.75
@@ -697,7 +709,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Runs = 1
                     Outs += 1
                     Bases = "001"
-                elif TagThird < (OddsTagThird + 0.05):
+                elif TagThird < (OddsTagThird + 0.0309):
                     Outs += 2
                     Bases = "001"
                 else:
@@ -717,7 +729,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Outs += 1
                     Bases = "110"
             elif Outs > 0:
-                OddsOutAtSecond = 0 # insert odds
+                OddsOutAtSecond = 0.7 # insert odds
                 OutAtSecond = random.random()
                 if Runners[1].position == "1B" or Runners.position[1] == "C" or Runners[1].position == "P":
                     OddsOutAtSecond *= 1.15
@@ -729,7 +741,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Bases = "101"
                     del Runners[0]
                     if Outs <= 2:
-                        OddsDoublePlay = 0 #insert odds
+                        OddsDoublePlay = 0.25 #insert odds
                         DoublePlay = random.random()
                         if Batter.position == "1B" or Batter.position == "C" or Batter.position =="P":
                             OddsDoublePlay *= 1.25
@@ -753,7 +765,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Runners.append(Batter)
             Runs += 1
             del Runners[0]
-            OddsToScore = 0 #insert odds
+            OddsToScore = 0.588 #insert odds
             SecondToScore = random.random()
             if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                 OddsToScore -= 0.15
@@ -816,7 +828,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             Bases = "111"
         elif Result == "FO":
             if Outs < 2:
-                OddsTagThird = 0 #insert odds
+                OddsTagThird = 0.804 #insert odds
                 TagThird = random.random()
                 if Runners[0].position == "1B" or Runners.position[0] == "C" or Runners[0].position == "P":
                     OddsTagThird *= 0.75
@@ -826,7 +838,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Runs = 1
                     Outs += 1
                     Bases = "011"
-                elif TagThird < (OddsTagThird + 0.05):
+                elif TagThird < (OddsTagThird + 0.0309):
                     Outs += 2
                     Bases = "011"
                 else:
@@ -844,7 +856,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     del Runners[0]
                     Bases = "111"
             else:
-                OddsOutAtSecond = 0 # insert odds
+                OddsOutAtSecond = 0.7 # insert odds
                 OutAtSecond = random.random()
                 if Runners[1].position == "1B" or Runners.position[1] == "C" or Runners[1].position == "P":
                     OddsOutAtSecond *= 1.15
@@ -856,7 +868,7 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     Bases = "101"
                     del Runners[0]
                     if Outs <= 2:
-                        OddsDoublePlay = 0 #insert odds
+                        OddsDoublePlay = 0.25 #insert odds
                         DoublePlay = random.random()
                         if Batter.position == "1B" or Batter.position == "C" or Batter.position =="P":
                             OddsDoublePlay *= 1.25
@@ -864,13 +876,14 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                             OddsDoublePlay *= 0.85
                         if DoublePlay < OddsDoublePlay:
                             Outs += 1
+                            Bases = "100"
                         else:
                             Runners.append(Batter)
                             Runs += 1
                             del Runners[0]
-                            Bases = "001"         
+                            Bases = "101"         
                 else:
-                    Bases = "010"
+                    Bases = "110"
                     Runs += 1
                     del Runners[0]
                     Outs += 1
@@ -914,7 +927,7 @@ def HalfInning(TeamHitting, LineUp, Pitcher, Score, Hits, Pitchcount)
     Outs = 0
     while Outs < 3:
         CurrentResult, Bases, CurrentOuts, Runs, CurrentRunners = AtBat(Pitcher, Lineup[SpotInLineup], Bases, Outs, Runners, Score)
-        PitchCount += Pitcher.PitchesPerBatter
+        PitchCount += Pitcher.NP/Pitcher.TBF
         if TeamHitting == "Away":
             AwayScore += Runs
             if Result == "1B" or Result == "2B" or Result == "3B" or Result == "HR":
@@ -946,7 +959,7 @@ def HalfInning(TeamHitting, LineUp, Pitcher, Score, Hits, Pitchcount)
             if AskUser == "y":
                 continue
             if AskUser == "p":
-                for players in pitcher_list:
+                for players in pitcher_list: #Make statement for selecting which pitcher list to go for
                     print(player)
                 NewPitcher = input("Enter one of the pitchers above\n")
                 if NewPitcher not in pitcher_list:
@@ -989,7 +1002,7 @@ CurrentInning = 1
 while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] = Score[1]):
     HalfInning()
     CurrentInning += 1
-    if GameMode == "Inning":
+    if GameMode == "Inning" or GameMode == "AtBat":
         DueUp = LineUp[LineUpSpot]
         OnDeck = LineUp[LineUpSpot+1]
         InTheHole = LineUp[LineUpSpot+2]
@@ -1030,6 +1043,9 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] = Score[1]):
                 GameMode = "Sim2End"
             if AskUser == "q":
                 exit()
+    else:
+        if PitchCount > 
+    
 
     ##Managerial style argument
     ##Conditions for how many bases runner on base get per type of hit
