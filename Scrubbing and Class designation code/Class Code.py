@@ -6,8 +6,8 @@ Created on Thu Apr 22 19:32:23 2021
 """
 import pandas as pd
 
-df = pd.read_csv(r'Astros Hitters.csv')
-dfp = pd.read_csv(r'Astros Pitchers.csv')
+df = pd.read_csv(r'Yankees_Hitters.csv')
+dfp = pd.read_csv(r'Yankees_Pitchers.csv')
 
 
 class Batter:
@@ -68,6 +68,7 @@ class Pitcher:
 
 Pitchers_list = []
 for x in range(len(dfp)):
+    if int(dfp.iloc[x][15]) != 0:
         player_name = dfp.iloc[x][2]
         Strikeout = float(dfp.iloc[x][21]) / float(dfp.iloc[x][25])
         PitchCount = float(dfp.iloc[x][26])/ float(dfp.iloc[x][8])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
@@ -84,3 +85,50 @@ for x in range(len(dfp)):
         p1 = Pitcher(dfp.iloc[x][2], dfp.iloc[x][1], dfp.iloc[x][35], Strikeout, Walk, HomeRun, Hit, PitchCount, BattersFaced, GamesPitched, InningsPitched, AverageAgainst, GroundOverAir)
         Pitchers_list.append(p1)
 
+list_of_batters = []
+for x in range(len(Batters_list)):
+    list_of_batters.append(Batters_list[x].name)
+    
+dictionary_of_batters = {}
+for x in range(len(Batters_list)):
+    BatterName = list_of_batters[x]
+    dictionary_of_batters[BatterName] = Batters_list[x]
+
+    
+#Prompting the user to input batters and position
+#Checks to see if it is a batter in the batters list thus being valid
+#adds that batter to a dictionary
+AwayLineup = []
+for x in range(0,9):
+    flag = True
+    while flag == True:
+        lineupnumber = str(x+1)
+        Player = input("Enter A player for the " + lineupnumber + " spot in the lineup:")
+        Position = input("Enter the player's position:")
+        if Player in list_of_batters:
+            addtolineup = dictionary_of_batters[Player]
+            flag = False
+        else:
+            print("Please enter a valid player's name:")
+    AwayLineup.append(addtolineup)
+
+
+list_of_pitchers = []
+for x in range(len(Pitchers_list)):
+    list_of_pitchers.append(Pitchers_list[x].name)
+    
+dictionary_of_pitchers = {}
+for x in range(len(Pitchers_list)):
+    PitcherName = list_of_pitchers[x]
+    dictionary_of_pitchers[PitcherName] = Pitchers_list[x]
+    
+
+flag = True
+while flag == True:
+     Player = input("Enter starting pitcher:")
+     if Player in list_of_pitchers:
+         addtolineup = dictionary_of_pitchers[Player]
+         flag = False
+     else:
+        print("Please enter a valid player's name:")
+AwayLineup.append(addtolineup)
