@@ -32,6 +32,7 @@ for i in range(1,331,50):
     soup = BeautifulSoup(page.text, 'html.parser')
 
     players = soup.find_all('tr', attrs={'class':re.compile('row player-10-')})
+    print(players)
     for player in players:
         
         stats = [stat.get_text() for stat in player.find_all('td')]
