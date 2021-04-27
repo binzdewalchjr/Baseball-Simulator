@@ -1060,11 +1060,13 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
                     del Runners[0]
                     Outs += 1
             
-        
-            
+    print("")    
+    print("Results of Last at Bat")        
     print(Result)
-    print(Bases)
-    print(Runs)
+    print("Status of Bases", Bases)
+    print(Batter)
+    print("Runs Scored on last at bat", Runs)
+    print("Outs ", + Outs)
     
     
     
@@ -1190,7 +1192,7 @@ def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCou
                 GameNumber = 99
             if AskUser == "q":
                 exit()
-        Outs += CurrentOuts
+        Outs = CurrentOuts
    
     return TeamHitting, Score, Hits, Pitcher, PitchCount, SpotInLineupINN
 
@@ -1241,16 +1243,21 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
                 OnDeck = LineUp[SpotInLineup[1]+1]
                 InTheHole = LineUp[SpotInLineup[1]+2]
             InningStatus = 'Bottom'
+        print("")
+        print("##############################################################")
+        print("")
         print("It is the " + InningStatus + " of the " , CurrentInning//1 , "inning")
+        print("The Score is ", AwayTeam, Score[0], HomeTeam, Score[1])
+        print("is on the mound")
         print("Due up:{0}\n{1}\n{2}\n".format(DueUp, OnDeck, InTheHole))
-        AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'h', to simulate to the end of the game type 'e', to quit type 'q'\n")
+        AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'b', to simulate to the end of the game type 'e', to quit type 'q'\n")
         if AskUser == "y":
             continue
         if AskUser == "p":
             if TeamHitting == "Away":
-                change_pitcher_list = Pitchers_list1
+                change_pitcher_list = list_of_pitchers
             else:
-                change_pitcher_list = Pitchers_list
+                change_pitcher_list = list_of_pitchers1
             for player in change_pitcher_list: #Make statement for selecting which pitcher list to go for
                 print(player)
             NewPitcher = input("Enter one of the pitchers above\n")
@@ -1265,9 +1272,9 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
                     Pitcher = NewPitcher
         if AskUser == "b":
             if TeamHitting == "Away":
-                change_batters_list = Batters_list
+                change_batters_list = list_of_batters
             else:
-                change_batters_list = Batters_list1
+                change_batters_list = list_of_batters1
             for players in change_batters_list:
                 if player not in LineUp:
                     print(player)
@@ -1287,10 +1294,11 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
         if AskUser == "q":
             exit()
     else:
-        if PitchCount > (Pitcher.NP/Pitcher.G):
+        if PitchCount > Pitcher.NP:
             ##Replace Pitcher
             Pitcher = 0
-    
+
+print("The Game is over, The Final Score is", AwayTeam, Score[0], HomeTeam, Score[1])
 
     ##Managerial style argument
     ##Conditions for how many bases runner on base get per type of hit
