@@ -30,7 +30,7 @@ import pandas as pd
     ## indicating which team a player plays for
 SetAwayTeam = False
 SetHomeTeam = False
-PossibleTeams = ["Astros"]
+PossibleTeams = ["Astros", "Yankees"]
 while SetAwayTeam == False:
     AwayTeam = input("Enter the name of the Away Team. For a list of possible teams type 'ls', to exit type 'q' \n")
     if AwayTeam == "ls":
@@ -147,18 +147,115 @@ for i in range(0,2):
             if i == 1:
                 Pitchers_list1.append(p1)
    
-AwayLineup = input("Enter away team line up in the form 'Player[Postition],Player[Postition]...' "+ \
-                   "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
-                   "If the pitcher is hitting for himself in the National League list the name twice"+ \
-                     " once for his hitting spot in the line up and again at the end as a pitcher.")
+#This Part Sets the lineup and starting pitchers for the away team
+list_of_batters = []
+for x in range(len(Batters_list)):
+    list_of_batters.append(Batters_list[x].name)
     
-HomeLineup = input("Enter home team line up in the form 'Player[Postition],Player[Postition]...' "+ \
-                   "The first 9 spots in the line up are the hitters and the 10th is the pitcher. "+\
-                   "If the pitcher is hitting for himself in the National League list the name twice"+ \
-                     " once for his hitting spot in the line up and again at the end as a pitcher.")
-    
-GameMode = input("Enter game mode: 100Game, Inning, AtBat\n")
+dictionary_of_batters = {}
+for x in range(len(Batters_list)):
+    BatterName = list_of_batters[x]
+    dictionary_of_batters[BatterName] = Batters_list[x]
 
+    
+#Prompting the user to input baters and position
+#Checks to see if it is a batter in the batters list thus being valid
+#adds that batter to a dictionary
+#batters and pitchers clases stored in AwayLineup
+AwayLineup = []
+for x in range(0,9):
+    flag = True
+    while flag == True:
+        lineupnumber = str(x+1)
+        Player = input("Enter A player for the " + lineupnumber + " spot in the lineup: ")
+        Position = input("Enter the player's position: ")
+        if Player in list_of_batters:
+            addtolineup = dictionary_of_batters[Player]
+            flag = False
+        else:
+            print("Please enter a valid player's name: ")
+    AwayLineup.append(addtolineup) #
+
+
+list_of_pitchers = []
+for x in range(len(Pitchers_list)):
+    list_of_pitchers.append(Pitchers_list[x].name)
+    
+dictionary_of_pitchers = {}
+for x in range(len(Pitchers_list)):
+    PitcherName = list_of_pitchers[x]
+    dictionary_of_pitchers[PitcherName] = Pitchers_list[x]
+    
+
+flag = True
+while flag == True:
+     Player = input("Enter starting pitcher:")
+     if Player in list_of_pitchers:
+         addtolineup = dictionary_of_pitchers[Player]
+         flag = False
+     else:
+        print("Please enter a valid player's name: ")
+AwayLineup.append(addtolineup)
+
+
+#This Part Sets the lineup and starting pitchers for the home team
+list_of_batters1 = []
+for x in range(len(Batters_list1)):
+    list_of_batters1.append(Batters_list1[x].name)
+    
+dictionary_of_batters1 = {}
+for x in range(len(Batters_list1)):
+    BatterName = list_of_batters1[x]
+    dictionary_of_batters1[BatterName] = Batters_list1[x]
+
+    
+#Prompting the user to input baters and position
+#Checks to see if it is a batter in the batters list thus being valid
+#adds that batter to a dictionary
+HomeLineup = []
+for x in range(0,9):
+    flag = True
+    while flag == True:
+        lineupnumber = str(x+1)
+        Player = input("Enter A player for the " + lineupnumber + " spot in the lineup: ")
+        Position = input("Enter the player's position: ")
+        if Player in list_of_batters:
+            addtolineup = dictionary_of_batters1[Player]
+            flag = False
+        else:
+            print("Please enter a valid player's name: ")
+    HomeLineup.append(addtolineup) #
+
+
+list_of_pitchers1 = []
+for x in range(len(Pitchers_list1)):
+    list_of_pitchers1.append(Pitchers_list1[x].name)
+    
+dictionary_of_pitchers1 = {}
+for x in range(len(Pitchers_list1)):
+    PitcherName = list_of_pitchers1[x]
+    dictionary_of_pitchers1[PitcherName] = Pitchers_list1[x]
+    
+
+flag = True
+while flag == True:
+     Player = input("Enter starting pitcher: ")
+     if Player in list_of_pitchers1:
+         addtolineup = dictionary_of_pitchers1[Player]
+         flag = False
+     else:
+        print("Please enter a valid player's name: ")
+HomeLineup.append(addtolineup)
+
+
+###Set Up Game Mode
+GameMode = input("Enter game mode from the following options: 100Game, Inning, AtBat")
+if GameMode != "100Game" or GameMode != "Inning" or GameMode != "AtBat":
+    while GameMode != "100Game" or GameMode != "Inning" or GameMode != "AtBat":
+        print("Please enter a valid game mode. Appropriate options are: 100Game\nInning\nAtBat\nType 'q' to quit")
+        GameMode = input()
+        if GameMode == "q":
+            exit()
 ##Pool of available pitchers(dicitonary)
 
 ##Pool of available bench players (dictionary)
@@ -913,65 +1010,68 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             ##Option to change hitters
 ##Game initialization
 Outs = 0
-AwayPitcher = AwayLineup[0]#insert code
-HomePitcher = HomeLineup[0]
+AwayPitcher = AwayLineup[9]#insert code
+HomePitcher = HomeLineup[9]
 AwaySpotInLineup = 0
 HomeSpotInLineup = 0
 AwayScore = 0
 HomeScore = 0
 AwayHits = 0
 HomeHits = 0
+SpotInLineup = [AwaySpotInLineup, HomeSpotInLineup]
 Score= [AwayScore,HomeScore]
 Hits = [AwayHits, HomeHits]
 PitchCount = 0
 ##Inning Loop
-def HalfInning(TeamHitting, LineUp, SpotInLineUp, Pitcher, Score, Hits, PitchCount):
-    AwaySpotInLineup = SpotInLineUp[0]
-    HomeSpotInLineup = SpotInLineUp[1]
+def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCount, GameMode):
+    if TeamHitting == "Away":
+        SpotInLineup = SpotInLineup[0]
+    if TeamHitting == "Home":
+        SpotInLineup = SpotInLineup[1]
     AwayScore = Score[0]
     HomeScore = Score[1]
     AwayHits = Hits[0]
     HomeHits = Hits[1]
     Outs = 0
+    Bases = "000"
+    Runners = []
     while Outs < 3:
-        CurrentResult, Bases, CurrentOuts, Runs, CurrentRunners = AtBat(Pitcher, Lineup[SpotInLineup], Bases, Outs, Runners, Score)
+        CurrentResult, Bases, CurrentOuts, Runs, CurrentRunners = AtBat(Pitcher, LineUp[SpotInLineup], Bases, Outs, Runners, Score)
         PitchCount += Pitcher.NP/Pitcher.TBF
         if TeamHitting == "Away":
             AwayScore += Runs
             if CurrentResult == "1B" or CurrentResult == "2B" or CurrentResult == "3B" or CurrentResult == "HR":
                 AwayHits += 1
-            if AwaySpotInLineup == 8:
-                AwaySpotInLineup = 0
+            if SpotInLineup == 8:
+                SpotInLineup = 0
             else:
-                AwaySpotInLineup += 1
+                SpotInLineup += 1
             
             TempLineUpSpot = AwaySpotInLineup
             TempLineUp = AwayLineup
-            TempPitcher = HomePitcher
             
         if TeamHitting == "Home":
             HomeScore += Runs
-            if Result == "1B" or Result == "2B" or Result == "3B" or Result == "HR":
+            if CurrentResult == "1B" or CurrentResult == "2B" or CurrentResult == "3B" or CurrentResult == "HR":
                 HomeHits += 1
-            if HomeSpotInLineup == 8:
-                HomeSpotInLineup = 0
+            if SpotInLineup == 8:
+                SpotInLineup = 0
             else:
-                HomeSpotInLineup += 1
+                SpotInLineup += 1
             TempLineUpSpot = HomeSpotInLineup
             TempLineUp = HomeLineup
-            TempPitcher = AwayPitcher
              
         if GameMode == "AtBat":
-            print("Now Batting: {0} \n Pitching: {1}".format(TempLineUp[TempLineUpSpot], TempPitcher))
+            print("Now Batting: {0} \n Pitching: {1}".format(LineUp[SpotInLineup], Pitcher))
             AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'h', to simulate to the end of the game type 'e', to quit type 'q'\n")
             if AskUser == "y":
                 continue
             if AskUser == "p":
                 if TeamHitting == "Away":
-                    change_pitcher_list = pitcher_list1
+                    change_pitcher_list = Pitchers_list1
                 else:
-                    change_pitcher_list = pitcher_list
-                for players in change_pitcher_list: #Make statement for selecting which pitcher list to go for
+                    change_pitcher_list = Pitchers_list
+                for player in change_pitcher_list: #Make statement for selecting which pitcher list to go for
                     print(player)
                 NewPitcher = input("Enter one of the pitchers above\n")
                 if NewPitcher not in change_pitcher_list:
@@ -982,52 +1082,61 @@ def HalfInning(TeamHitting, LineUp, SpotInLineUp, Pitcher, Score, Hits, PitchCou
                                 print(player)
                         if NewPitcher == "q":
                             exit()
-                if TeamHitting == "Away":
-                    HomePitcher = NewPitcher
-                if TeamHitting == "Home":
-                    AwayPitcher = NewPitcher
+                        Pitcher = NewPitcher
             if AskUser == "b":
-                for players in Batters_list:
-                    if player not in TempLineUp:
+                if TeamHitting == "Away":
+                    change_batters_list = Batters_list
+                else:
+                    change_batters_list = Batters_list1
+                for players in change_batters_list:
+                    if player not in LineUp:
                         print(player)
                 NewBatter = input("Enter one of the batters above\n")
-                if NewBatter not in Batters_list:
-                    while NewBatter not in Batters_list:
+                if NewBatter not in change_batters_list or NewBatter in LineUp:
+                    while NewBatter not in change_batters_list:
                         NewBatter = input("Please enter a valid hitter. To list the hitters type 'ls'. To exit type 'q' \n")
                         if NewBatter == "ls":
-                           if player not in TempLineUp:
+                           if player not in LineUp:
                                print(player)
                         if NewBatter == "q":
                             exit()
             if AskUser == "e":
-                GameMode = "Sim2End"
+                GameMode = "100Game"
+                GameNumber = 99
             if AskUser == "q":
                 exit()
     if TeamHitting == "Away":
         TeamHitting = "Home"
     if TeamHitting == "Home":
         TeamHitting = "Away"
-    return TeamHitting, Score, Hits, PitchCount, LineUpSpot
+    return TeamHitting, Score, Hits, Pitcher, PitchCount, SpotInLineup
 
 ##Main Game Code
 CurrentInning = 1
-while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]):
+TeamHitting = "Away"
+while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (CurrentInning == 9.5 and Score[0]< Score[1]):
     HalfInning()
-    CurrentInning += 1
+    CurrentInning += 0.5
+    if TeamHitting == "Away":
+        SpotInLineup = SpotInLineup[0]
+        LineUp = AwayLineup
+    if TeamHitting == "Home":
+        SpotInLineup = SpotInLineup[1]
+        LineUp = HomeLineup
     if GameMode == "Inning" or GameMode == "AtBat":
-        DueUp = LineUp[LineUpSpot]
-        OnDeck = LineUp[LineUpSpot+1]
-        InTheHole = LineUp[LineUpSpot+2]
+        DueUp = LineUp[SpotInLineup]
+        OnDeck = LineUp[SpotInLineup+1]
+        InTheHole = LineUp[SpotInLineup+2]
         print("Due up:{0}\n{1}\n{2}\n".format(DueUp, OnDeck, InTheHole))
         AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'h', to simulate to the end of the game type 'e', to quit type 'q'\n")
         if AskUser == "y":
             continue
         if AskUser == "p":
             if TeamHitting == "Away":
-                change_pitcher_list = pitcher_list1
+                change_pitcher_list = Pitchers_list1
             else:
-                change_pitcher_list = pitcher_list
-            for players in change_pitcher_list:
+                change_pitcher_list = Pitchers_list
+            for player in change_pitcher_list: #Make statement for selecting which pitcher list to go for
                 print(player)
             NewPitcher = input("Enter one of the pitchers above\n")
             if NewPitcher not in change_pitcher_list:
@@ -1038,23 +1147,25 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]):
                             print(player)
                     if NewPitcher == "q":
                         exit()
-            if TeamHitting == "Away":
-                HomePitcher = NewPitcher
-            if TeamHitting == "Home":
-                AwayPitcher = NewPitcher
+                    Pitcher = NewPitcher
         if AskUser == "b":
-            for players in Batters_list:
-                if player not in TempLineUp:
+            if TeamHitting == "Away":
+                change_batters_list = Batters_list
+            else:
+                change_batters_list = Batters_list1
+            for players in change_batters_list:
+                if player not in LineUp:
                     print(player)
             NewBatter = input("Enter one of the batters above\n")
-            if NewBatter not in Batters_list:
-                while NewBatter not in Batters_list:
+            if NewBatter not in change_batters_list or NewBatter in LineUp:
+                while NewBatter not in change_batters_list:
                     NewBatter = input("Please enter a valid hitter. To list the hitters type 'ls'. To exit type 'q' \n")
                     if NewBatter == "ls":
-                       if player not in TempLineUp:
+                       if player not in LineUp:
                            print(player)
                     if NewBatter == "q":
                         exit()
+            
         if AskUser == "e":
             GameMode = "100Games"
             GameNumber = 99
