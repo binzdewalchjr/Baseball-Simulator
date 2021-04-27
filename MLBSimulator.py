@@ -139,7 +139,7 @@ for i in range(0,2):
         if int(dataframep.iloc[x][15]) != 0:
             player_name = dataframep.iloc[x][2]
             Strikeout = float(dataframep.iloc[x][21]) / float(dataframep.iloc[x][25])
-            PitchCount = float(dataframep.iloc[x][26])/ float(dataframep.iloc[x][8])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
+            PitchCount = float(dataframep.iloc[x][25])/ float(dataframep.iloc[x][8])  # Pitch count has holder values in the current form of the exel file.  Correct values need to be used
             BattersFaced = float(dataframep.iloc[x][25])
             HomeRun = (float(dataframep.iloc[x][18])) / float(dataframep.iloc[x][15])
             Walk = (float(dataframep.iloc[x][17])) / BattersFaced
@@ -903,9 +903,9 @@ def AtBat(Pitcher,Batter,Bases,Outs,Runners, Score):
             elif Outs > 0:
                 OddsOutAtSecond = 0.7 # insert odds
                 OutAtSecond = random.random()
-                if Runners[1].POS == "1B" or Runners[1].POS == "C" or Runners[1].POS == "P":
+                if Batter.POS == "1B" or Batter.POS == "C" or Batter.POS == "P":
                     OddsOutAtSecond *= 1.15
-                elif Runners[1].POS == "SS" or Runners[1].POS == "CF":
+                elif Batter.POS == "SS" or Batter.POS == "CF":
                     OddsOutAtSecond *= 0.85
                 if OutAtSecond < OddsOutAtSecond:
                     Runners.append(Batter)
@@ -1138,7 +1138,7 @@ def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCou
         if TeamHitting == "Home":
             HomeScore += Runs
             Score[1] = HomeScore
-            PitchCount[1] += (Pitcher.NP/Pitcher.TBF)
+            PitchCount[1] += (Pitcher.NP*Pitcher.GP/Pitcher.TBF)
             if CurrentResult == "1B" or CurrentResult == "2B" or CurrentResult == "3B" or CurrentResult == "HR":
                 HomeHits += 1
             if SpotInLineupINN == 8:
@@ -1207,15 +1207,18 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
     CurrentInning += 0.5
     if TeamHitting == "Away":
         SpotInLineup[0] = SpotInLineupINN
-        LineUp = AwayLineup
     elif TeamHitting == "Home":
         SpotInLineup[1] = SpotInLineupINN
-        LineUp = HomeLineup
+
         
     if TeamHitting == "Away":
         TeamHitting = "Home"
+        LineUp = HomeLineup
+        Pitcher = AwayLineup[9]
     else:
         TeamHitting = "Away"
+        LineUp = AwayLineup
+        Pitcher = HomeLineup[9]
         
     if GameMode == "Inning" or GameMode == "AtBat":
         if TeamHitting == 'Away':
@@ -1248,16 +1251,16 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
         print("")
         print("It is the " + InningStatus + " of the " , CurrentInning//1 , "inning")
         print("The Score is ", AwayTeam, Score[0], HomeTeam, Score[1])
-        print("is on the mound")
+        print(Pitcher, "is on the mound")
         print("Due up:{0}\n{1}\n{2}\n".format(DueUp, OnDeck, InTheHole))
         AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'b', to simulate to the end of the game type 'e', to quit type 'q'\n")
         if AskUser == "y":
             continue
         if AskUser == "p":
             if TeamHitting == "Away":
-                change_pitcher_list = list_of_pitchers
-            else:
                 change_pitcher_list = list_of_pitchers1
+            else:
+                change_pitcher_list = list_of_pitchers
             for player in change_pitcher_list: #Make statement for selecting which pitcher list to go for
                 print(player)
             NewPitcher = input("Enter one of the pitchers above\n")
@@ -1269,7 +1272,10 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
                             print(player)
                     if NewPitcher == "q":
                         exit()
-                    Pitcher = NewPitcher
+                    if TeamHitting == 'Away':
+                        HomeLineup[9] = NewPitcher
+                    else:
+                        AwayLineup[9] = NewPitcher
         if AskUser == "b":
             if TeamHitting == "Away":
                 change_batters_list = list_of_batters
@@ -1294,7 +1300,11 @@ while CurrentInning < 10 or (CurrentInning >= 10 and Score[0] == Score[1]) or (C
         if AskUser == "q":
             exit()
     else:
-        if PitchCount > Pitcher.NP:
+        if TeamHitting == 'Away':
+            Pitchcountsub = PitchCount[0]
+        else:
+            Pitchcountsub = PitchCount[1]
+        if PitchCountsub > Pitcher.NP:
             ##Replace Pitcher
             Pitcher = 0
 
