@@ -15,10 +15,12 @@ AtBat:  simulates each at bat and allows the user to switch pitchers in the midd
 changed) Future versions may include an input option for the number of games to simulate.
 
 
-Pitcher Class:
+Pitcher Dictionary:
+Dictionary of pitcher class objects
 Stores all of the data about the pitchers in a dictionary with the players name as the key and the class object as the value paired with the key
 
-Batter Class:
+Batter Dictionary:
+Dictionary of batter class objects
 Stores all of the data about the Batters in a dictionary with the players name as the key and the class object as the value paired with the key
 
 
