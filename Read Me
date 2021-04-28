@@ -1,32 +1,35 @@
 Baseball simulator is the main code that allows us to simulate games
-Attached in the folder currently are appropriate files for the yankees and the Astros from 2019 that can be loaded in the baseball simulator with the program
+Attached in the folder currently are appropriate files for the Yankees and the Astros from 2019 that can be loaded in the baseball simulator with the program
 
 To load Teams:
-enter the away and home teams names by mascot for instance the chicago cubs would be "Cubs"
-This will refrence the file in the folder and eventually will scrub the internet for the appropriate stats in for all players in the stats
+Enter the away and home teams names by mascot for instance the Chicago Cubs would be "Cubs"
+This will refrence the .csv file in the folder. Prior to the selecting of teams a seperate srcubbing file can be used to retrive the stats and populate the .csv 
+file for each team. Currently the scrub file works for ESPN.com, however there are a couple data points needing to be retrieved from a secondary source and 
+appended to the end of the data frame. The site is slightly messier to scrub and a reliable solution is still in development. 
 
 Modes
-
+The simulator will prompt  the user for a mode they wish to run the simulation. There are three modes:
 Inning: Plays a half inning then asks the user if they want to switch hitters or batters then advances
 AtBat:  simulates each at bat and allows the user to switch pitchers in the middle of the inning
-100Game:  simulates 100 games with pitchers lists and hitters list and outputs the result of the 100 games
+100Game:  simulates 100 games with pitchers lists and hitters list and outputs the result of the 100 games (could also be larger than 100 games if the number is
+changed) Future versions may include an input option for the number of games to simulate.
 
 
 Pitcher Class:
-Stores all of the data about the pitchers in a dictionary with the players name as the key and the class as the output of the key
+Stores all of the data about the pitchers in a dictionary with the players name as the key and the class object as the value paired with the key
 
 Batter Class:
-Stores all of the data about the Batters in a dictionary with the players name as the key and the class as the output of the key
+Stores all of the data about the Batters in a dictionary with the players name as the key and the class object as the value paired with the key
 
 
 Player Selection:
 The user is prompted at the begining to select a lineup from members on the respective teams
 If the user wants to change the line up or the pitcher during the middle of the game the player can do so in Inning and AtBat mode.
-if the 100 game mode is selected pitchers are replaced in the inning after they reach a pitch count higher than their average pitch count
+If the 100 game mode is selected pitchers are replaced in the inning after they reach a pitch count higher than their average pitch count.
 
 
 AtBat function:
-The AtBat function calculates the probability of each different event that could happen that is dependent upon both the batter andd the pitcher
+The AtBat function calculates the probability of each event occuring. The odds are dependent upon both the batter, the pitcher, and the league average.
 
 Half Inning Function:
-The half Inning function swithces the teams that are hitting and pitching for each half inning.
+The half Inning function swithces the teams that are hitting and pitching for each half inning, and included options for substitutions.
