@@ -322,7 +322,7 @@ for x in range (0,8):
 
 
 ###Set Up Game Mode
-GameMode = "100Game" #input("Enter game mode from the following options: 100Game, Inning, AtBat: ")
+GameMode = "Inning" #input("Enter game mode from the following options: 100Game, Inning, AtBat: ")
 GameModeFlag = False
 if GameMode == '100Game' or GameMode == 'Inning' or GameMode == 'AtBat':
     GameModeFlag = True
@@ -1115,8 +1115,8 @@ def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCou
     Runners = []
     while Outs < 3:
         CurrentResult, Bases, CurrentOuts, Runs, CurrentRunners = AtBat(Pitcher, LineUp[SpotInLineupINN], Bases, Outs, Runners, Score)
-        print(TeamHitting)
-        print(Runs)
+        # print(TeamHitting)
+        # print(Runs)
         if TeamHitting == "Away":
             AwayScore += Runs
             Score[0] = AwayScore
@@ -1146,14 +1146,14 @@ def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCou
              
         if GameMode == "AtBat":
             print("Now Batting: {0} \n Pitching: {1}".format(LineUp[SpotInLineupINN], Pitcher))
-            AskUser = input("To continue type 'y' , to change pitcher type 'p' to change hitter type 'h', to simulate to the end of the game type 'e', to quit type 'q'\n")
+            AskUser = input("To continue type 'y' , to change pitcher type 'p' to change batter type 'b', to simulate to the end of the game type 'e', to quit type 'q'\n")
             if AskUser == "y":
                 continue
             if AskUser == "p":
                 if TeamHitting == "Away":
-                    change_pitcher_list = Pitchers_list1
+                    change_pitcher_list = list_of_pitchers1
                 else:
-                    change_pitcher_list = Pitchers_list
+                    change_pitcher_list = list_of_pitchers
                 for player in change_pitcher_list: #Make statement for selecting which pitcher list to go for
                     print(player)
                 NewPitcher = input("Enter one of the pitchers above\n")
@@ -1168,15 +1168,18 @@ def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCou
                 if TeamHitting == 'Away':
                     FindPitcher = dictionary_of_pitchers1[NewPitcher]
                     HomeLineup[9] = FindPitcher
+                    Pitcher = HomeLineup[9]
                 else:
                     FindPitcher = dictionary_of_pitchers[NewPitcher]
                     AwayLineup[9] = FindPitcher
+                    Pitcher = AwayLineup[9]
+                
             if AskUser == "b":
                 if TeamHitting == "Away":
-                    change_batters_list = Batters_list
+                    change_batters_list = list_of_batters
                 else:
-                    change_batters_list = Batters_list1
-                for players in change_batters_list:
+                    change_batters_list = list_of_batters1
+                for player in change_batters_list:
                     if player not in LineUp:
                         print(player)
                 NewBatter = input("Enter one of the batters above\n")
@@ -1184,16 +1187,17 @@ def HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCou
                     while NewBatter not in change_batters_list:
                         NewBatter = input("Please enter a valid hitter. To list the hitters type 'ls'. To exit type 'q' \n")
                         if NewBatter == "ls":
-                           if player not in LineUp:
-                               print(player)
+                            for player in change_batters_list:
+                                if player not in LineUp:
+                                    print(player)
                         if NewBatter == "q":
                             sys.exit()
                 if TeamHitting == "Away":
                     FindBatter = dictionary_of_batters[NewBatter]
-                    AwayLineup[SpotInLineup[0]] = FindBatter
+                    AwayLineup[SpotInLineupINN] = FindBatter
                 else:
                     FindBatter = dictionary_of_batters1[NewBatter]
-                    HomeLineup[SpotInLineup[1]] = FindBatter
+                    HomeLineup[SpotInLineupINN] = FindBatter
             if AskUser == "e":
                 GameMode = "100Game"
                 #GameNumber = 99
@@ -1212,7 +1216,7 @@ def MainGame(AwayTeamWins, HomeTeamWins, GameMode):
     InningStatus = "Top"
     AwayRelieverNumber = 1
     HomeRelieverNumber = 1
-    while CurrentInning < 10 or (CurrentInning >= 10 and ((Score[0] == Score[1] and InningStatus == "Top")or(Score[0]>=Score[1] and InningStatus == "Bottom")) or (CurrentInning == 9.5 and Score[1]< Score[0])):
+    while CurrentInning < 10 or (CurrentInning >= 10 and (Score[0] == Score[1] and InningStatus == "Top")) or (CurrentInning >=10 and (Score[0]>=Score[1] and InningStatus == "Bottom")) or (CurrentInning == 9.5 and Score[1]< Score[0]):
     #(CurrentInning >= 10 and Score[0] == Score[1]) or (CurrentInning == 9.5 and Score[0]< Score[1]):
         TeamHitting, ScoreINN, HitsINN, CurrentPitcher, PitchCountINN, SpotInLineupINN = HalfInning(TeamHitting, LineUp, SpotInLineup, Pitcher, Score, Hits, PitchCount, GameMode)
         CurrentInning += 0.5
@@ -1234,14 +1238,21 @@ def MainGame(AwayTeamWins, HomeTeamWins, GameMode):
             Pitcher = HomeLineup[9]
             
         if GameMode == "100Game":
-            if CurrentInning >= 10 and InningStatus == "Top" and (Score[0] != Score[1]):
-                continue
             if TeamHitting == "Away":
-                print("\n###\nTop of the {0}\n{1} {2}\n{3} {4}\n".format(int(CurrentInning//1),AwayTeam,Score[0],HomeTeam,Score[1]))
-                print("{0} is on the mound\n###".format(HomeLineup[9]))
-            if TeamHitting == "Home":
-                print("\n###\nBottom of the {0}\n{1} {2}\n{3} {4}\n".format(int(CurrentInning//1),AwayTeam,Score[0],HomeTeam,Score[1]))
-                print("{0} is on the mound\n###".format(AwayLineup[9]))
+                InningStatus = "Top"
+            else:
+                InningStatus = "Bottom"
+            if CurrentInning >= 10:
+                if InningStatus == "Top": 
+                    if(Score[0] != Score[1]):
+                        print("")
+            else:
+                if TeamHitting == "Away":
+                    print("\n###\nTop of the {0}\n{1} {2}\n{3} {4}\n".format(int(CurrentInning//1),AwayTeam,Score[0],HomeTeam,Score[1]))
+                    print("{0} is on the mound\n###".format(HomeLineup[9]))
+                if TeamHitting == "Home":
+                    print("\n###\nBottom of the {0}\n{1} {2}\n{3} {4}\n".format(int(CurrentInning//1),AwayTeam,Score[0],HomeTeam,Score[1]))
+                    print("{0} is on the mound\n###".format(AwayLineup[9]))
                 
         if GameMode == "Inning" or GameMode == "AtBat":
             if TeamHitting == 'Away':
@@ -1332,11 +1343,12 @@ def MainGame(AwayTeamWins, HomeTeamWins, GameMode):
                     while NewBatter not in change_batters_list:
                         NewBatter = input("Please enter a valid hitter. To list the hitters type 'ls'. To exit type 'q' \n")
                         if NewBatter == "ls":
-                           if player not in LineUp:
-                               print(player)
+                            for player in change_batters_list:
+                                if player not in LineUp:
+                                    print(player)
                         if NewBatter == "q":
                             sys.exit()
-                LineUpSwap = int(input("Please enter line up spot to place batter"))-1
+                LineUpSwap = int(input("Please enter line up spot to place batter\n"))-1
                 
                 if TeamHitting == "Away":
                     FindBatter = dictionary_of_batters[NewBatter]
