@@ -2,14 +2,19 @@ Baseball simulator is the main code that allows us to simulate games
 Attached in the folder currently are appropriate files for the Yankees and the Astros from 2019 that can be loaded in the baseball simulator with the program
 
 To Scub for Team Data:
-Currently This code scrubs from Baseball refrence and is capable of producing a fully functioning Hitter stat Csv and has almost all of the data needed for the Pitcher CSV. Our data is obtained from baseball refrence, however data for number of pitches and GO/AO ratio need to be obtained from MLB.com and as of now need to be entered manually in the CSV as we have not been able to interact with the Mlb.com page by clicking a toggle button with our python code.  The data currently being scrapped from those spots is data from the wrong configuration of the webpage.  For this to happen we would need to interact with Java.
+Currently This code scrubs from Baseball refrence and is capable of producing a fully functioning Hitter stat Csv and has almost all of the data needed for 
+the Pitcher CSV. Our data is obtained from baseball refrence, however data for number of pitches and GO/AO ratio need to be obtained from MLB.com and as of 
+now need to be entered manually in the CSV. We have not been able to interact with the Mlb.com page by clicking a toggle button with our python code.  
+The data currently being scrapped from those spots is data from the wrong configuration of the webpage.  For this to happen we would need to interact with Java.
 
-To change the team that you are scrubing for The user must input the abreviation for the city (Houston would be HOU) in the Url, The year, and at the bottom should modify the team name to the desired team name.
+To change the team that you are scrubing for, the user must input the abreviation for the city (Houston would be HOU) in the Url, The year, and at the bottom 
+should modify the team name to the desired team name.
 
 To load Teams:
 Enter the away and home teams names by mascot for instance the Chicago Cubs would be "Cubs"
 This will refrence the .csv file in the folder. Prior to the selecting of teams a seperate srcubbing file can be used to retrive the stats and populate the .csv 
-file for each team. Currently the scrub file works for baseball refrence, however data for number of pitches and GO/AO ratio need to be entered manually in the CSV as we have not been able to modify the page where we get that data from.
+file for each team. Currently the scrub file works for baseball refrence, however data for number of pitches and GO/AO ratio need to be entered manually in the 
+CSV as we have not been able to modify the page where we get that data from.
 
 
 Modes
@@ -36,7 +41,7 @@ If the 100 game mode is selected pitchers are replaced in the inning after they 
 
 
 AtBat function:
-The AtBat function calculates the probability of each event occuring. The odds are dependent upon both the batter, the pitcher, and the league average.
+The AtBat function calculates the probability of each event occuring. The odds are dependent upon the batter, the pitcher, and the league average.
 
 Half Inning Function:
-The half Inning function swithces the teams that are hitting and pitching for each half inning, and included options for substitutions.
+The half Inning function swithces the teams that are hitting and pitching for each half inning, and includes options for substitutions.
